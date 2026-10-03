@@ -155,16 +155,32 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Mobile Menu Backdrop */}
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.3)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 85,
+          }}
+        />
+      )}
+
       {/* Mobile Menu */}
       {mobileOpen && (
         <div
           style={{
             position: 'fixed', top: '80px', left: '1rem', right: '1rem',
-            padding: '1.5rem', zIndex: 90, borderRadius: '1rem',
-            background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)',
+            padding: '1.25rem', zIndex: 95, borderRadius: '1rem',
+            background: 'rgba(255,255,255,0.96)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             border: '1px solid var(--border)',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.08)',
-            animation: 'fadeInDown 0.3s ease',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+            animation: 'fadeInDown 0.25s ease',
           }}
         >
           {navLinks.map((link) => (
@@ -174,7 +190,8 @@ const Navbar = () => {
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.1em',
-                padding: '0.8rem 1rem', borderRadius: '0.75rem',
+                padding: '0.75rem 1rem', borderRadius: '0.5rem',
+                minHeight: '44px',
                 color: 'var(--text-secondary)', transition: 'all 0.2s ease',
               }}
             >
@@ -190,13 +207,26 @@ const Navbar = () => {
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.1em',
-              padding: '0.8rem 1rem', borderRadius: '0.75rem',
+              padding: '0.75rem 1rem', borderRadius: '0.5rem',
+              minHeight: '44px',
               color: 'var(--text)', fontWeight: 600, transition: 'all 0.2s ease',
-              marginTop: '0.5rem', borderTop: '1px solid var(--border)',
+              marginTop: '0.25rem', borderTop: '1px solid var(--border)',
             }}
           >
             RESUME (PDF)
             <FiArrowUpRight style={{ opacity: 0.6 }} />
+          </a>
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, 'contact')}
+            className="btn btn-dark interactive"
+            style={{
+              width: '100%', justifyContent: 'center', marginTop: '0.75rem',
+              padding: '0.75rem 1rem', minHeight: '44px', fontSize: '0.75rem',
+            }}
+          >
+            <span className="pulse-dot" style={{ width: 6, height: 6, background: 'white' }} />
+            HIRE ME
           </a>
         </div>
       )}

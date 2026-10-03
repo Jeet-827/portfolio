@@ -15,106 +15,104 @@ const PHRASES = [
 ];
 
 const HorizontalScroll = () => {
-  const sectionRef = useRef(null);
-  const trackRef   = useRef(null);
-  const cardRefs   = useRef([]);
-  const numRef     = useRef(null);
+  const sectionRef    = useRef(null);
+  const trackRef      = useRef(null);
+  const cardRefs      = useRef([]);
+  const numRef        = useRef(null);
+  const mobileListRef = useRef(null);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    const track   = trackRef.current;
-    if (!section || !track) return;
+    const section    = sectionRef.current;
+    const track      = trackRef.current;
+    const mobileList = mobileListRef.current;
+    if (!section) return;
 
-    let ctx;
+    const mm = gsap.matchMedia();
 
-    const initHorizontal = () => {
-      ctx = gsap.context(() => {
-        const getTravelDistance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+    // ── Desktop: Pinned scrub animation ──
+    mm.add('(min-width: 769px)', () => {
+      if (!track) return;
+      const getTravelDistance = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
-        /* ── 1. Main Horizontal Pinning & Translation ── */
-        const hTween = gsap.to(track, {
-          x: () => -getTravelDistance(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: () => `+=${getTravelDistance() + 300}`,
-            pin: true,
-            scrub: 1.2, // extra buttery smooth scrub
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
-            onUpdate: (self) => {
-              if (numRef.current) {
-                const progressVal = Math.round(self.progress * 100);
-                numRef.current.textContent = String(progressVal).padStart(3, '0');
-              }
-            },
+      /* 1. Main Horizontal Pinning & Translation */
+      const hTween = gsap.to(track, {
+        x: () => -getTravelDistance(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${getTravelDistance() + 300}`,
+          pin: true,
+          scrub: 1.2,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            if (numRef.current) {
+              const progressVal = Math.round(self.progress * 100);
+              numRef.current.textContent = String(progressVal).padStart(3, '0');
+            }
           },
-        });
+        },
+      });
 
-        /* ── 2. Per-Card Staggered Character Fly-in Animations ── */
-        cardRefs.current.forEach((card) => {
-          if (!card) return;
+      /* 2. Character fly-in animations */
+      cardRefs.current.forEach((card) => {
+        if (!card) return;
+        const chars = card.querySelectorAll('.h-char');
+        const sub   = card.querySelector('.h-sub');
 
-          const chars = card.querySelectorAll('.h-char');
-          const sub   = card.querySelector('.h-sub');
-
-          if (chars.length) {
-            gsap.fromTo(chars,
-              {
-                opacity: 0,
-                y: 50,
-                rotateZ: () => gsap.utils.random(-15, 15),
-                scale: 0.85,
+        if (chars.length) {
+          gsap.fromTo(chars,
+            { opacity: 0, y: 50, rotateZ: () => gsap.utils.random(-15, 15), scale: 0.85 },
+            {
+              opacity: 1, y: 0, rotateZ: 0, scale: 1, ease: 'back.out(1.6)', stagger: 0.03,
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: hTween,
+                start: 'left 88%',
+                end: 'left 42%',
+                scrub: 1,
               },
-              {
-                opacity: 1,
-                y: 0,
-                rotateZ: 0,
-                scale: 1,
-                ease: 'back.out(1.6)',
-                stagger: 0.03,
-                scrollTrigger: {
-                  trigger: card,
-                  containerAnimation: hTween,
-                  start: 'left 88%',
-                  end: 'left 42%',
-                  scrub: 1,
-                },
-              }
-            );
-          }
+            }
+          );
+        }
 
-          if (sub) {
-            gsap.fromTo(sub,
-              { opacity: 0, y: 35 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: 'power3.out',
-                scrollTrigger: {
-                  trigger: card,
-                  containerAnimation: hTween,
-                  start: 'left 80%',
-                  end: 'left 45%',
-                  scrub: 1,
-                },
-              }
-            );
-          }
-        });
-      }, section);
+        if (sub) {
+          gsap.fromTo(sub,
+            { opacity: 0, y: 35 },
+            {
+              opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: hTween,
+                start: 'left 80%',
+                end: 'left 45%',
+                scrub: 1,
+              },
+            }
+          );
+        }
+      });
+    });
 
-      ScrollTrigger.refresh();
-    };
-
-    // Initialize with a short RAF delay to ensure exact layout dimensions
-    const rafId = requestAnimationFrame(initHorizontal);
+    // ── Mobile: Smooth vertical flow without viewport locking ──
+    mm.add('(max-width: 768px)', () => {
+      if (!mobileList) return;
+      const items = Array.from(mobileList.children);
+      gsap.fromTo(items,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 0.7, stagger: 0.15, ease: 'power3.out',
+          scrollTrigger: {
+            trigger: mobileList,
+            start: 'top 85%',
+          },
+        }
+      );
+    });
 
     return () => {
-      cancelAnimationFrame(rafId);
-      if (ctx) ctx.revert();
+      mm.revert();
     };
   }, []);
 
@@ -124,52 +122,32 @@ const HorizontalScroll = () => {
       id="horizontal-scroll"
       style={{
         width: '100%',
-        height: '100vh',
-        overflow: 'hidden',
+        minHeight: '100vh',
         background: '#0a0a0a',
         position: 'relative',
         zIndex: 10,
+        overflow: 'hidden',
       }}
     >
-      {/* Decorative top & bottom hairline borders */}
+      {/* Decorative hairline borders */}
       <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 1,
+          position: 'absolute', top: 0, left: 0, right: 0, height: 1,
           background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
           pointerEvents: 'none',
         }}
       />
       <div
         style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 1,
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: 1,
           background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* Subtle guide line */}
+      {/* Desktop Indicator - Explore */}
       <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: '50%',
-          width: 1,
-          background: 'rgba(255,255,255,0.025)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Top-left: explore indicator */}
-      <div
+        className="h-desktop-indicator"
         style={{
           position: 'absolute',
           top: '2.5rem',
@@ -187,19 +165,16 @@ const HorizontalScroll = () => {
       >
         <span
           style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: 'white',
-            display: 'inline-block',
-            boxShadow: '0 0 8px rgba(255,255,255,0.6)',
+            width: 6, height: 6, borderRadius: '50%', background: 'white',
+            display: 'inline-block', boxShadow: '0 0 8px rgba(255,255,255,0.6)',
           }}
         />
         HORIZONTAL SCROLL EXPERIENCE →
       </div>
 
-      {/* Top-right: live progress counter */}
+      {/* Desktop Indicator - Progress Counter */}
       <div
+        className="h-desktop-indicator"
         style={{
           position: 'absolute',
           top: '2.5rem',
@@ -221,26 +196,10 @@ const HorizontalScroll = () => {
         <span>/ 100</span>
       </div>
 
-      {/* Bottom-right: badge */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '2.5rem',
-          right: 'clamp(1.5rem, 5vw, 4rem)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.58rem',
-          letterSpacing: '0.22em',
-          color: 'rgba(255,255,255,0.25)',
-          pointerEvents: 'none',
-          zIndex: 20,
-        }}
-      >
-        GSAP PINNED TRACK · FLUID MOTION
-      </div>
-
-      {/* Moving Horizontal Track */}
+      {/* Desktop Pinned Moving Horizontal Track */}
       <div
         ref={trackRef}
+        className="h-desktop-track"
         style={{
           position: 'absolute',
           top: '50%',
@@ -248,7 +207,7 @@ const HorizontalScroll = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '12vw',
-          paddingLeft: '100vw', // starts off right edge
+          paddingLeft: '100vw',
           paddingRight: '35vw',
           whiteSpace: 'nowrap',
           willChange: 'transform',
@@ -266,7 +225,6 @@ const HorizontalScroll = () => {
                 cursor: 'default',
               }}
             >
-              {/* Main title rendered with individual characters */}
               <div
                 className="h-title"
                 style={{
@@ -294,7 +252,6 @@ const HorizontalScroll = () => {
                 ))}
               </div>
 
-              {/* Sub-label */}
               <div
                 className="h-sub"
                 style={{
@@ -310,7 +267,6 @@ const HorizontalScroll = () => {
               </div>
             </div>
 
-            {/* Separator badge between phrases */}
             {idx < PHRASES.length - 1 && (
               <div
                 style={{
@@ -332,6 +288,87 @@ const HorizontalScroll = () => {
           </React.Fragment>
         ))}
       </div>
+
+      {/* Mobile Flow Layout (rendered naturally on mobile, zero scroll locks) */}
+      <div className="h-mobile-layout">
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '0.6rem',
+          fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
+          letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)',
+          marginBottom: '1rem',
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'white' }} />
+          CORE PHILOSOPHY
+        </div>
+
+        <div ref={mobileListRef} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {PHRASES.map((phrase, idx) => (
+            <div
+              key={idx}
+              style={{
+                padding: '1.5rem',
+                borderRadius: '1rem',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}
+            >
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+                letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)',
+                marginBottom: '0.5rem',
+              }}>
+                // 0{idx + 1}
+              </div>
+              <h3 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.75rem, 6vw, 2.5rem)',
+                fontWeight: 900,
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1,
+                color: '#ffffff',
+                marginBottom: '0.5rem',
+              }}>
+                {phrase.text}
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.75rem',
+                letterSpacing: '0.15em',
+                color: 'rgba(255,255,255,0.5)',
+              }}>
+                {phrase.sub}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          #horizontal-scroll {
+            height: auto !important;
+            min-height: auto !important;
+            padding: 4.5rem 1.25rem !important;
+            overflow: visible !important;
+          }
+          .h-desktop-track,
+          .h-desktop-indicator {
+            display: none !important;
+          }
+          .h-mobile-layout {
+            display: flex !important;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+          }
+        }
+        @media (min-width: 769px) {
+          .h-mobile-layout {
+            display: none !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };

@@ -54,11 +54,11 @@ const Journey = () => {
           {journeyTimeline.map((item, idx) => {
             const s = statusColor(item.status);
             return (
-              <div key={idx} style={{
+              <div key={idx} className="timeline-item" style={{
                 display: 'flex', gap: '1.5rem', alignItems: 'flex-start',
                 position: 'relative', zIndex: 1, opacity: 0,
               }}>
-                <div style={{ width: 56, minWidth: 56, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '0.3rem' }}>
+                <div className="timeline-node" style={{ width: 56, minWidth: 56, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '0.3rem' }}>
                   <div style={{
                     width: item.status === 'Active Focus' ? 14 : 10,
                     height: item.status === 'Active Focus' ? 14 : 10,
@@ -68,7 +68,7 @@ const Journey = () => {
                 </div>
 
                 <div className="card interactive" style={{
-                  flex: 1, padding: '1.5rem', borderRadius: '1rem',
+                  flex: 1, padding: 'clamp(1rem, 3vw, 1.5rem)', borderRadius: '1rem',
                   borderLeft: `2px solid ${s.border}`,
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
@@ -95,7 +95,9 @@ const Journey = () => {
 
       <style>{`
         @media (max-width: 640px) {
-          .timeline-line { left: 18px !important; }
+          .timeline-line { left: 16px !important; }
+          .timeline-node { width: 32px !important; min-width: 32px !important; }
+          .timeline-item { gap: 0.75rem !important; }
         }
       `}</style>
     </section>

@@ -16,26 +16,32 @@ const ParticleCanvas = () => {
     let particles = [];
     let mouse = { x: -1000, y: -1000 };
 
+    let resizeTimer;
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
 
     resize();
-    window.addEventListener('resize', resize);
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(resize, 200);
+    };
+    window.addEventListener('resize', onResize);
 
-    const PARTICLE_COUNT = Math.min(80, Math.floor(window.innerWidth / 20));
-    const CONNECTION_DISTANCE = 150;
-    const MOUSE_RADIUS = 200;
+    const isMobile = window.innerWidth < 768;
+    const PARTICLE_COUNT = isMobile ? 24 : Math.min(65, Math.floor(window.innerWidth / 22));
+    const CONNECTION_DISTANCE = isMobile ? 95 : 140;
+    const MOUSE_RADIUS = 180;
 
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = (Math.random() - 0.5) * 0.4;
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.vy = (Math.random() - 0.5) * 0.35;
         this.radius = Math.random() * 1.5 + 0.5;
-        this.baseAlpha = Math.random() * 0.3 + 0.1;
+        this.baseAlpha = Math.random() * 0.25 + 0.08;
         this.alpha = this.baseAlpha;
       }
 
@@ -55,7 +61,7 @@ const ParticleCanvas = () => {
           const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
           this.vx += (dx / dist) * force * 0.02;
           this.vy += (dy / dist) * force * 0.02;
-          this.alpha = Math.min(0.8, this.baseAlpha + force * 0.5);
+          this.alpha = Math.min(0.6, this.baseAlpha + force * 0.4);
         } else {
           this.alpha += (this.baseAlpha - this.alpha) * 0.02;
         }
@@ -68,7 +74,7 @@ const ParticleCanvas = () => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(16, 185, 129, ${this.alpha})`;
+        ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha * 0.35})`;
         ctx.fill();
       }
     }
@@ -86,11 +92,11 @@ const ParticleCanvas = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < CONNECTION_DISTANCE) {
-            const alpha = (1 - dist / CONNECTION_DISTANCE) * 0.12;
+            const alpha = (1 - dist / CONNECTION_DISTANCE) * 0.08;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(16, 185, 129, ${alpha})`;
+            ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }

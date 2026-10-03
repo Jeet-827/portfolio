@@ -13,6 +13,7 @@ const ProjectCard = ({ project }) => {
     if (!el) return;
 
     const onMove = (e) => {
+      if (window.innerWidth < 1024) return;
       const r = el.getBoundingClientRect();
       const x = ((e.clientX - r.left) / r.width  - 0.5) * 18;
       const y = ((e.clientY - r.top)  / r.height - 0.5) * -10;
@@ -39,7 +40,7 @@ const ProjectCard = ({ project }) => {
     }}>
       {/* Header */}
       <div style={{
-        padding: '2rem', background: 'var(--bg-alt)',
+        padding: 'clamp(1.25rem, 3vw, 2rem)', background: 'var(--bg-alt)',
         borderBottom: '1px solid var(--border)', position: 'relative',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
@@ -63,7 +64,7 @@ const ProjectCard = ({ project }) => {
       </div>
 
       {/* Content */}
-      <div style={{ padding: '1.5rem 2rem 2rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <div style={{ padding: 'clamp(1.25rem, 3vw, 2rem)', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div>
           <h3 style={{
             fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 700,
@@ -84,7 +85,7 @@ const ProjectCard = ({ project }) => {
               <span key={i} className="tag">{tech}</span>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
             <a href={project.liveDemo} target="_blank" rel="noopener noreferrer"
               className="btn btn-dark interactive" style={{ fontSize: '0.65rem', padding: '0.55rem 1.1rem' }}>
               <FiExternalLink /> LIVE DEMO

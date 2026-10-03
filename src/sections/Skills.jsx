@@ -48,7 +48,8 @@ const Skills = () => {
 
         {/* Marquee */}
         <div ref={marqueeRef} style={{
-          overflow: 'hidden', padding: '1.5rem 0', margin: '0 -3rem 3rem',
+          overflow: 'hidden', padding: '1.5rem 0',
+          margin: '0 calc(-1 * clamp(1.5rem, 5vw, 3rem)) 3rem',
           borderTop: '1px solid rgba(255,255,255,0.06)',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           opacity: 0,
@@ -69,7 +70,7 @@ const Skills = () => {
 
         {/* Grid */}
         <div ref={gridRef} style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem',
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem',
         }}>
           {skillCategories.map((cat, idx) => (
             <div key={idx} className="card-dark" style={{ padding: '1.75rem', borderRadius: '1rem' }}>

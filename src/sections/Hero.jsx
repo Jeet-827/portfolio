@@ -76,6 +76,7 @@ const Hero = () => {
     /* ── card tilt on mouse move ── */
     const card = cardRef.current;
     const onMove = (e) => {
+      if (window.innerWidth < 1024) return;
       const r = card.getBoundingClientRect();
       const x = ((e.clientX - r.left) / r.width  - 0.5) * 14;
       const y = ((e.clientY - r.top)  / r.height - 0.5) * -14;
@@ -131,8 +132,9 @@ const Hero = () => {
               ref={nameRef}
               style={{
                 fontFamily: 'var(--font-display)', fontWeight: 900,
-                fontSize: 'clamp(3rem,8vw,7rem)', lineHeight: 0.95,
+                fontSize: 'clamp(2.3rem,7.5vw,7rem)', lineHeight: 0.95,
                 letterSpacing: '-0.05em', color: 'var(--text)', opacity: 0,
+                wordBreak: 'break-word',
               }}
             >
               JEET<br />RANPARIYA
