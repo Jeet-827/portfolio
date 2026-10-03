@@ -21,13 +21,14 @@ export function SmoothScrollProvider({ children }) {
   useEffect(() => {
     // 1. Initialize Lenis with smooth momentum settings
     const l = new Lenis({
-      duration: 1.25,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // smooth exponential deceleration
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.05,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.0, // Natural touch physics on mobile
+      syncTouch: false,
       infinite: false,
     });
 
@@ -48,13 +49,13 @@ export function SmoothScrollProvider({ children }) {
       });
     });
 
-    // 3. Drive Lenis updates using GSAP's internal ticker for perfect 60-120fps sync
+    // 3. Drive Lenis updates using GSAP's internal ticker
     const tickerUpdate = (time) => {
       l.raf(time * 1000);
     };
 
     gsap.ticker.add(tickerUpdate);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33); // Graceful recovery from dropped frames
 
     // Ensure ScrollTrigger defaults to window
     ScrollTrigger.defaults({ scroller: window });
@@ -63,12 +64,25 @@ export function SmoothScrollProvider({ children }) {
     const t1 = setTimeout(() => ScrollTrigger.refresh(), 200);
     const t2 = setTimeout(() => ScrollTrigger.refresh(), 800);
 
-    const onResize = () => ScrollTrigger.refresh();
+    // Debounce resize to prevent mobile Chrome address bar collapse from freezing scroll
+    let lastWidth = window.innerWidth;
+    let resizeTimer = null;
+    const onResize = () => {
+      const currentWidth = window.innerWidth;
+      clearTimeout(resizeTimer);
+      if (Math.abs(currentWidth - lastWidth) > 10) {
+        lastWidth = currentWidth;
+        resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 100);
+      } else {
+        resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 350);
+      }
+    };
     window.addEventListener('resize', onResize);
 
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(resizeTimer);
       window.removeEventListener('resize', onResize);
       gsap.ticker.remove(tickerUpdate);
       l.destroy();

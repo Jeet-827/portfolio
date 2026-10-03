@@ -361,15 +361,26 @@ ul, ol { list-style: none; }
   cursor: pointer;
 }
 
-/* ─── Cursor Styles: Hide default cursor on desktop, only GSAP cursor shows ─── */
-@media (pointer: fine) {
-  html, body, *, *::before, *::after {
-    cursor: none !important;
-  }
+/* ─── Cursor Styles ─── */
+/* Only hide default cursor when JS confirms mouse device and starts tracking */
+body.has-custom-cursor,
+body.has-custom-cursor a,
+body.has-custom-cursor button,
+body.has-custom-cursor .interactive,
+body.has-custom-cursor input[type="submit"] {
+  cursor: none !important;
+}
+
+.cursor-dot,
+.cursor-ring {
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
 }
 
 @media (pointer: coarse) {
-  .cursor-dot, .cursor-ring {
+  .cursor-dot,
+  .cursor-ring {
     display: none !important;
   }
 }

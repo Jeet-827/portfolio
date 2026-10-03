@@ -11,14 +11,16 @@ const CustomCursor = () => {
   const ringRef = useRef(null);
 
   useEffect(() => {
-    // Only run on fine-pointer devices (desktop with mouse/trackpad)
-    if (window.matchMedia('(pointer: coarse)').matches) return;
+    // If device doesn't support fine pointer at all, exit safely
+    if (typeof window === 'undefined' || !window.matchMedia('(pointer: fine)').matches) {
+      return;
+    }
 
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    // Set initial centering offsets: dot is 8x8 (radius 4), ring is 40x40 (radius 20)
+    // Set initial centering offsets and zero opacity
     gsap.set(dot, { xPercent: -50, yPercent: -50, opacity: 0 });
     gsap.set(ring, { xPercent: -50, yPercent: -50, opacity: 0 });
 
@@ -30,14 +32,26 @@ const CustomCursor = () => {
 
     let hasMoved = false;
     let isHovered = false;
-    let isClicking = false;
+    let isTouchActive = false;
+
+    const onTouchStart = () => {
+      // Touch detected: restore native browser behavior immediately
+      isTouchActive = true;
+      document.body.classList.remove('has-custom-cursor');
+      gsap.to([dot, ring], { opacity: 0, duration: 0.2 });
+    };
 
     const onMouseMove = (e) => {
+      if (isTouchActive) {
+        // If mouse moved again after touch, re-enable custom cursor
+        isTouchActive = false;
+      }
+
       const { clientX: x, clientY: y } = e;
 
       if (!hasMoved) {
         hasMoved = true;
-        // Snap instantly to cursor on first movement
+        document.body.classList.add('has-custom-cursor');
         gsap.set([dot, ring], { x, y });
         gsap.to([dot, ring], { opacity: 1, duration: 0.3, ease: 'power2.out' });
       }
@@ -49,7 +63,7 @@ const CustomCursor = () => {
     };
 
     const onMouseDown = () => {
-      isClicking = true;
+      if (isTouchActive) return;
       gsap.to(ring, {
         scale: isHovered ? 1.2 : 0.75,
         duration: 0.2,
@@ -63,7 +77,7 @@ const CustomCursor = () => {
     };
 
     const onMouseUp = () => {
-      isClicking = false;
+      if (isTouchActive) return;
       gsap.to(ring, {
         scale: isHovered ? 1.8 : 1,
         duration: 0.35,
@@ -77,6 +91,7 @@ const CustomCursor = () => {
     };
 
     const onMouseOver = (e) => {
+      if (isTouchActive) return;
       const target = e.target;
       if (!(target instanceof Element)) return;
 
@@ -117,15 +132,18 @@ const CustomCursor = () => {
     };
 
     const onMouseLeaveWindow = () => {
+      document.body.classList.remove('has-custom-cursor');
       gsap.to([dot, ring], { opacity: 0, duration: 0.25, ease: 'power2.out' });
     };
 
     const onMouseEnterWindow = () => {
-      if (hasMoved) {
+      if (hasMoved && !isTouchActive) {
+        document.body.classList.add('has-custom-cursor');
         gsap.to([dot, ring], { opacity: 1, duration: 0.25, ease: 'power2.out' });
       }
     };
 
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mouseup', onMouseUp);
@@ -134,6 +152,8 @@ const CustomCursor = () => {
     document.documentElement.addEventListener('mouseenter', onMouseEnterWindow);
 
     return () => {
+      document.body.classList.remove('has-custom-cursor');
+      window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mouseup', onMouseUp);
@@ -161,6 +181,7 @@ const CustomCursor = () => {
           zIndex: 999999,
           mixBlendMode: 'difference',
           willChange: 'transform',
+          opacity: 0,
         }}
       />
       {/* GSAP Outer Ring */}
@@ -180,6 +201,7 @@ const CustomCursor = () => {
           zIndex: 999998,
           mixBlendMode: 'difference',
           willChange: 'transform',
+          opacity: 0,
         }}
       />
     </>
