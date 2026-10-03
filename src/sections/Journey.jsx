@@ -34,7 +34,7 @@ const Journey = () => {
   };
 
   return (
-    <section id="journey" data-scroll-section className="section section-divider">
+    <section id="journey" data-scroll-section className="section section-divider" style={{ overflow: 'hidden' }}>
       <div className="container">
         <div ref={headerRef} className="section-header" style={{ opacity: 0 }}>
           <div className="section-category">// 04. THE PATH</div>

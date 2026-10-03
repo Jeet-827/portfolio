@@ -106,6 +106,7 @@ const Hero = () => {
         maxWidth: '1400px',
         margin: '0 auto',
         position: 'relative',
+        overflow: 'hidden',
       }}
     >
       {/* Background horizontal rule (animates in) */}

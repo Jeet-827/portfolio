@@ -36,7 +36,7 @@ const Skills = () => {
   };
 
   return (
-    <section id="skills" data-scroll-section className="section section-dark">
+    <section id="skills" data-scroll-section className="section section-dark" style={{ overflow: 'hidden' }}>
       <div className="container">
         <div ref={headerRef} className="section-header" style={{ opacity: 0 }}>
           <div className="section-category" style={{ color: 'rgba(255,255,255,0.4)' }}>// 03. TECH ARSENAL</div>

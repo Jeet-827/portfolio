@@ -54,6 +54,8 @@ html {
   scroll-behavior: initial; /* Locomotive handles smooth scrolling */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -61,7 +63,9 @@ body {
   background-color: var(--bg);
   color: var(--text);
   overflow-x: hidden;
+  max-width: 100vw;
   line-height: 1.6;
+  position: relative;
 }
 
 ::selection {
@@ -92,6 +96,7 @@ ul, ol { list-style: none; }
 .section {
   padding: var(--section-padding) 0;
   position: relative;
+  overflow: hidden;
 }
 
 .section-dark {
@@ -398,6 +403,8 @@ body.has-custom-cursor input[type="submit"] {
 .smooth-scroll-wrapper {
   position: relative;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* ─── Responsive ─── */

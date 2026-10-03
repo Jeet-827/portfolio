@@ -35,7 +35,7 @@ const Github = () => {
   }, []);
 
   return (
-    <section id="github" data-scroll-section className="section section-divider">
+    <section id="github" data-scroll-section className="section section-divider" style={{ overflow: 'hidden' }}>
       <div className="container">
         <div ref={headerRef} className="section-header" style={{ opacity: 0 }}>
           <div className="section-category">// 05. OPEN SOURCE</div>
