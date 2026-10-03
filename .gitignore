@@ -28,3 +28,6 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+
+# Root files (served from public/)
+/resume.pdf

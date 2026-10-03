@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { FiGithub, FiLinkedin, FiTwitter, FiMail, FiArrowUpRight } from 'react-icons/fi';
+import { FiGithub, FiLinkedin, FiTwitter, FiMail, FiArrowUpRight, FiFileText } from 'react-icons/fi';
 import { useGSAP } from '../hooks/useGSAP';
 
 const Contact = () => {
@@ -57,10 +57,14 @@ const Contact = () => {
             opportunities, and technical collaborations.
           </p>
 
-          <div className="contact-animate" style={{ marginBottom: '3rem' }}>
+          <div className="contact-animate" style={{ marginBottom: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             <a href="mailto:ranpariyajeet27@gmail.com?subject=Project%20Inquiry%20-%20dev.RJ"
               className="btn btn-white btn-lg interactive" style={{ gap: '0.75rem' }}>
               <FiMail size={18} /> EMAIL ME <FiArrowUpRight />
+            </a>
+            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
+              className="btn btn-outline btn-lg interactive" style={{ gap: '0.75rem', borderColor: 'rgba(255,255,255,0.25)', color: 'white' }}>
+              <FiFileText size={18} /> VIEW RESUME <FiArrowUpRight />
             </a>
           </div>
 

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { FiFileText, FiArrowUpRight } from 'react-icons/fi';
 import { statistics } from '../data/skills';
 import { useGSAP } from '../hooks/useGSAP';
 
@@ -91,6 +92,18 @@ const About = () => {
               {mainTech.map((tech) => (
                 <span key={tech} className="tag interactive">{tech}</span>
               ))}
+            </div>
+
+            <div style={{ marginTop: '2rem' }}>
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-dark interactive"
+                style={{ gap: '0.6rem' }}
+              >
+                <FiFileText size={16} /> VIEW RESUME <FiArrowUpRight />
+              </a>
             </div>
           </div>
 

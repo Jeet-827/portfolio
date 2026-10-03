@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { FiGithub, FiArrowDown, FiArrowUpRight } from 'react-icons/fi';
+import { FiGithub, FiArrowDown, FiArrowUpRight, FiFileText } from 'react-icons/fi';
 import { useGSAP } from '../hooks/useGSAP';
 import { useLocomotiveScroll } from '../context/SmoothScroll';
 
@@ -166,6 +166,10 @@ const Hero = () => {
               else t?.scrollIntoView({ behavior: 'smooth' });
             }} className="btn btn-dark interactive">
               VIEW PROJECTS <FiArrowUpRight />
+            </a>
+            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
+              className="btn btn-outline interactive" style={{ gap: '0.5rem' }}>
+              <FiFileText /> RESUME
             </a>
             <a href="https://github.com/Jeet-827" target="_blank" rel="noopener noreferrer"
               className="btn btn-outline interactive">

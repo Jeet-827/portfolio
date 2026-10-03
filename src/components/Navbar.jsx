@@ -119,6 +119,21 @@ const Navbar = () => {
               </a>
             ))}
             <a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="interactive"
+              style={{
+                fontFamily: 'var(--font-mono)', fontSize: '0.68rem',
+                letterSpacing: '0.15em',
+                color: 'var(--text-muted)',
+                transition: 'color 0.3s ease',
+                display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+              }}
+            >
+              RESUME <FiArrowUpRight style={{ fontSize: '0.75rem' }} />
+            </a>
+            <a
               href="#contact"
               onClick={(e) => handleNavClick(e, 'contact')}
               className="btn btn-dark interactive"
@@ -167,6 +182,22 @@ const Navbar = () => {
               <FiArrowUpRight style={{ opacity: 0.3 }} />
             </a>
           ))}
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.1em',
+              padding: '0.8rem 1rem', borderRadius: '0.75rem',
+              color: 'var(--text)', fontWeight: 600, transition: 'all 0.2s ease',
+              marginTop: '0.5rem', borderTop: '1px solid var(--border)',
+            }}
+          >
+            RESUME (PDF)
+            <FiArrowUpRight style={{ opacity: 0.6 }} />
+          </a>
         </div>
       )}
 
